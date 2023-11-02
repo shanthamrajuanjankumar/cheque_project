@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Check Review</title>
+    <style>
+        .pdf-container {
+            width: 50%;
+            height: 500px; /* Set the desired height */
+            overflow-y: scroll; /* Enable vertical scrolling */
+            border: 1px solid #ccc; /* Optional border for the container */
+        }
+    </style>
+</head>
+
+  
+<body>
+    <h1>Online Check Deposit</h1>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1048.0.min.js"></script>
+
+    <script>
+    AWS.config.update({
+        accessKeyId: 'AKIA37YGOSG5DXITZNGD',
+        secretAccessKey: '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',
+        region: 'us-east-1' 
+        
+    });
+    var s3 = new AWS.S3();
+</script>
+  
+  
+    <div style="display: flex;">
+        
+    <div style="width: 30%;">
+    <form action="/review" method="POST" enctype="multipart/form-data">
+        <label for="receiverName">Receiver Name:</label>
+        <input type="text" id="receiverName" name="receiverName" value = "Prateek Agarwal" required><br><br>
+        
+        <label for="senderName">Sender Name:</label>
+        <input type="text" id="senderName" name="senderName" value = "DEEPAK CHOUDHARY" required><br><br>
+        
+        <label for="senderAccountNumber">Sender Account Number:</label>
+        <input type="text" id="senderAccountNumber" name="senderAccountNumber" value = "355835312808" required><br><br>
+        
+        <label for="chequeDate">Cheque Date:</label>
+        <input type="date" id="chequeDate" name="chequeDate" value ="08/04/2019" required><br><br>
+        
+        <label for="amountInNumbers">Amount in Numbers:</label>
+        <input type="number" step="0.01" id="amountInNumbers" name="amountInNumbers" value = "5025000" required><br><br>
+        
+        <label for="amountInWords">Amount in Words:</label>
+        <input type="text" id="amountInWords" name="amountInWords" value = "Fifty Lakh Twenty Five Thousand Only" readonly><br><br>
+        
+        <label for="submittedDateTime">Submitted Date and Time:</label>
+        <input type="datetime-local" id="submittedDateTime" name="submittedDateTime" disabled="true" required><br><br>
+        
+        <form action="/submit" enctype="multipart/form-data">
+          <button type="submit">Submit</button>
+        </form>
+          <form action="/cancel" enctype="multipart/form-data">
+            <button type="reset">Cancel</button>
+        </form>
+    </form>
+</div>
+
+<div class="pdf-container">
+    <iframe id="pdf-frame" width="100%" height="100%" frameborder="0"></iframe>
+</div>
+
+</div>
+<script>
+    // Replace with your S3 bucket and PDF file path
+    var bucketName = 'pandu-data';
+    var pdfKey = '20231031114457621879.pdf';
+
+    // Fetch the PDF file from Amazon S3
+    s3.getObject({ Bucket: bucketName, Key: pdfKey }, function(err, data) {
+        if (err) {
+            console.error('Error getting the PDF:', err);
+        } else {
+            var pdfData = data.Body;
+            var pdfUrl = URL.createObjectURL(new Blob([pdfData], { type: 'application/pdf' }));
+            document.getElementById('pdf-frame').src = pdfUrl;
+        }
+    });
+</script>
+</body>
+</html>
+
