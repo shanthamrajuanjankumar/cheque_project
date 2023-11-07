@@ -1,0 +1,6 @@
+flask
+PyPdf2
+boto3
+datetime
+reportlab
+PIL
